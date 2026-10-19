@@ -14,11 +14,11 @@ An interactive, browser-based 8-Puzzle solver for the Artificial Intelligence di
 | Assignment | Interactive 8-Puzzle Problem Solver using AI Search Algorithms |
 | Implemented solver | Uniform Cost Search (UCS) |
 | Technologies | HTML5, CSS3, JavaScript ES6, Bootstrap 5.3 CSS |
-| Deployment target | GitHub Pages |
+| Deployment  | GitHub Pages |
 
 **Project links**
 
-- **GitHub repository:** `ADD_YOUR_GITHUB_REPOSITORY_URL_HERE`
+- **GitHub repository:** https://github.com/DhruvK99/AI-8Puzzle-Visualizer
 - **GitHub Pages website:** `ADD_YOUR_GITHUB_PAGES_URL_HERE`
 
 Replace these two placeholders after the repository is created and GitHub Pages is deployed. Do not leave the placeholders in the final submitted README.
