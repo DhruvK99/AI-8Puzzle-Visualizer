@@ -1,0 +1,29 @@
+# macOS / Windows filesystem metadata
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+__MACOSX/
+Thumbs.db
+Desktop.ini
+
+# Editors and IDEs
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Logs and temporary files
+*.log
+npm-debug.log*
+yarn-debug.log*
+*.tmp
+
+# Dependencies / generated test output (if added later)
+node_modules/
+coverage/
+
+# Local secrets / environment configuration
+.env
+.env.*
+!.env.example

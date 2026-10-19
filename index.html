@@ -1,0 +1,766 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Interactive 8-Puzzle Solver — Uniform Cost Search (UCS)</title>
+  <!-- Bootstrap 5.3 CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+
+<body>
+  <!-- Mobile Navigation Header -->
+  <div class="top-mobile-bar">
+    <div>
+      <strong style="color: var(--accent-burgundy);">8-Puzzle UCS Solver</strong>
+    </div>
+    <button id="btn-mobile-menu" class="btn-neutral" type="button" aria-label="Toggle navigation">
+      ☰ Menu
+    </button>
+  </div>
+
+  <div class="app-shell">
+    <!-- Persistent Left Sidebar -->
+    <aside id="app-sidebar" class="app-sidebar" aria-label="Main Navigation">
+      <div class="sidebar-brand">
+        <h1 class="sidebar-brand-title">8-Puzzle UCS Solver</h1>
+        <p class="sidebar-brand-subtitle">Artificial Intelligence Case Study</p>
+      </div>
+
+      <ul class="sidebar-nav" id="sidebar-nav-list">
+        <li class="sidebar-nav-item">
+          <button type="button" class="sidebar-nav-link active" data-view="home">
+            <span>1. Home</span>
+          </button>
+        </li>
+        <li class="sidebar-nav-item">
+          <button type="button" class="sidebar-nav-link" data-view="input">
+            <span>2. Puzzle Input</span>
+          </button>
+        </li>
+        <li class="sidebar-nav-item">
+          <button type="button" class="sidebar-nav-link" data-view="algorithm">
+            <span>3. Algorithm Selection</span>
+            <span class="badge-soft">UCS</span>
+          </button>
+        </li>
+        <li class="sidebar-nav-item">
+          <button type="button" class="sidebar-nav-link" data-view="visualizer">
+            <span>4. Visualizer</span>
+            <span id="nav-badge-moves" class="badge-soft">—</span>
+          </button>
+        </li>
+        <li class="sidebar-nav-item">
+          <button type="button" class="sidebar-nav-link" data-view="search">
+            <span>5. Search Process</span>
+            <span id="nav-badge-expanded" class="badge-soft">—</span>
+          </button>
+        </li>
+        <li class="sidebar-nav-item">
+          <button type="button" class="sidebar-nav-link" data-view="summary">
+            <span>6. Solution Summary</span>
+          </button>
+        </li>
+        <li class="sidebar-nav-item">
+          <button type="button" class="sidebar-nav-link" data-view="info">
+            <span>7. Algorithm Info</span>
+          </button>
+        </li>
+      </ul>
+
+      <div class="sidebar-footer">
+        <div>Student: <strong>Dhruv Chetan Kothari</strong></div>
+        <div>Reg. No: <strong>24BCE0570</strong></div>
+        <div>Assigned Algorithm: <strong>#5 UCS</strong></div>
+        <div class="mt-1">
+          <a href="assets/tests.html" style="color: var(--accent-burgundy); text-decoration: none; font-weight: 600;">
+            → Run Automated Tests
+          </a>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Main Content Column -->
+    <div class="app-main">
+      <!-- Persistent Interactive Playback & Solver Bar -->
+      <header class="workspace-toolbar">
+        <div class="d-flex flex-wrap align-items-center justify-content-between gap-2">
+          <div class="d-flex flex-wrap align-items-center gap-1">
+            <button id="ctrl-run" type="button" class="btn-burgundy" title="Solve with UCS and start playback">
+              ▶ Run UCS
+            </button>
+            <button id="ctrl-pause" type="button" class="btn-neutral" disabled title="Pause playback">
+              ⏸ Pause
+            </button>
+            <button id="ctrl-resume" type="button" class="btn-neutral" disabled title="Resume playback">
+              ⏵ Resume
+            </button>
+            <button id="ctrl-prev" type="button" class="btn-neutral" title="Previous Step">
+              ⏮ Prev Step
+            </button>
+            <button id="ctrl-next" type="button" class="btn-neutral" title="Next Step">
+              ⏭ Next Step
+            </button>
+            <button id="ctrl-reset" type="button" class="btn-neutral" title="Reset to Step 0">
+              ↺ Reset
+            </button>
+          </div>
+
+          <div class="d-flex flex-wrap align-items-center gap-2">
+            <label for="ctrl-speed" class="small text-muted mb-0">Speed:</label>
+            <select id="ctrl-speed" class="form-select form-select-sm" style="width: 145px;">
+              <option value="1200">0.5× (Slow)</option>
+              <option value="700" selected>1.0× (Normal)</option>
+              <option value="350">2.0× (Fast)</option>
+              <option value="150">4.0× (Rapid)</option>
+            </select>
+            <span id="toolbar-step-indicator" class="badge-soft">Step 0 / 0</span>
+            <span id="toolbar-status-badge" class="badge-burgundy">Ready</span>
+          </div>
+        </div>
+      </header>
+
+      <!-- View Container -->
+      <main class="content-container">
+        <!-- Global validation / status alert -->
+        <div id="global-alert" class="alert alert-warning d-none py-2 px-3 small" role="alert"></div>
+
+        <!-- =========================================================
+             VIEW 1: HOME PAGE
+             ========================================================= -->
+        <section id="view-home" class="app-view active-view" aria-labelledby="heading-home">
+          <h2 id="heading-home" class="view-header-title">
+            Interactive 8-Puzzle Problem Solver using Uniform Cost Search
+          </h2>
+          <p class="view-header-subtitle">
+            Artificial Intelligence Digital Assignment (Case Study) — State-Space Search Visualizer
+          </p>
+
+          <div class="row g-3">
+            <div class="col-md-7">
+              <div class="academic-panel h-100">
+                <h3 class="panel-title">Academic Submission Details</h3>
+                <table class="table-academic mb-3">
+                  <tbody>
+                    <tr>
+                      <th style="width: 38%;">Course Name</th>
+                      <td>Artificial Intelligence</td>
+                    </tr>
+                    <tr>
+                      <th>Assignment Title</th>
+                      <td>Interactive 8-Puzzle Problem Solver using AI Search Algorithms</td>
+                    </tr>
+                    <tr>
+                      <th>Assigned Algorithm</th>
+                      <td><strong>Algorithm #5 — Uniform Cost Search (UCS)</strong></td>
+                    </tr>
+                    <tr>
+                      <th>Student Name</th>
+                      <td><strong id="student-name-display">Dhruv Chetan Kothari</strong></td>
+                    </tr>
+                    <tr>
+                      <th>Registration Number</th>
+                      <td><strong id="student-reg-display">24BCE0570</strong></td>
+                    </tr>
+                  </tbody>
+                </table>
+                <p class="small text-muted mb-3">
+                  This web application implements Uniform Cost Search (UCS) from scratch using a binary min-heap
+                  priority queue to find optimal 8-Puzzle solutions and visualize every state transition.
+                </p>
+                <div class="d-flex flex-wrap gap-2">
+                  <button type="button" class="btn-burgundy nav-jump-btn" data-target="input">
+                    Configure Puzzle Input →
+                  </button>
+                  <button type="button" class="btn-neutral nav-jump-btn" data-target="visualizer">
+                    Open Solution Visualizer →
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <div class="col-md-5">
+              <div class="academic-panel h-100">
+                <h3 class="panel-title">Introduction to the 8-Puzzle Problem</h3>
+                <p class="small">
+                  The <strong>8-Puzzle</strong> consists of a 3×3 frame containing eight numbered square tiles
+                  (<code>1</code> through <code>8</code>) and one blank position (represented as <code>0</code> or
+                  <code>_</code>).
+                </p>
+                <p class="small">
+                  <strong>Legal Movement Rule:</strong> Only the blank tile may move by swapping places with an
+                  orthogonally adjacent tile (<em>Up</em>, <em>Down</em>, <em>Left</em>, or <em>Right</em>). Diagonal
+                  moves, tile jumping, and row wrapping are strictly forbidden.
+                </p>
+                <p class="small mb-0">
+                  <strong>Uniform Cost Search (UCS):</strong> Expands the frontier node with the lowest accumulated path
+                  cost <code>g(n)</code> using a binary minimum-priority queue. With unit step cost (<code>c = 1</code>
+                  per move), UCS is both <strong>complete</strong> and <strong>optimal</strong>.
+                </p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- =========================================================
+             VIEW 2: PUZZLE INPUT
+             ========================================================= -->
+        <section id="view-input" class="app-view" aria-labelledby="heading-input">
+          <h2 id="heading-input" class="view-header-title">Puzzle Input & Validation</h2>
+          <p class="view-header-subtitle">
+            Configure the Initial State and Goal State manually (Method 1) or generate a guaranteed solvable puzzle
+            (Method 2).
+          </p>
+
+          <div class="row g-3">
+            <!-- Method 1: Manual 3x3 Configuration -->
+            <div class="col-lg-7">
+              <div class="academic-panel">
+                <h3 class="panel-title">Method 1 — Manual 3×3 Board Configuration</h3>
+                <p class="small text-muted">
+                  Enter each number <code>0</code>–<code>8</code> (or <code>_</code> for the blank tile <code>0</code>)
+                  exactly once per board.
+                </p>
+
+                <div class="row g-3 align-items-center text-center my-2">
+                  <div class="col-sm-6">
+                    <div class="fw-semibold small mb-2">Initial State</div>
+                    <div id="input-initial-grid" class="editable-board mx-auto" aria-label="Initial State Grid"></div>
+                  </div>
+                  <div class="col-sm-6">
+                    <div class="fw-semibold small mb-2">Goal State</div>
+                    <div id="input-goal-grid" class="editable-board mx-auto" aria-label="Goal State Grid"></div>
+                  </div>
+                </div>
+
+                <div id="input-validation-feedback" class="alert alert-secondary py-2 px-3 small mt-3 mb-3">
+                  Checking configuration...
+                </div>
+
+                <div class="d-flex flex-wrap gap-2">
+                  <button id="btn-apply-solve" type="button" class="btn-burgundy">
+                    Validate & Solve with UCS
+                  </button>
+                  <button id="btn-reset-pdf-default" type="button" class="btn-neutral">
+                    Load PDF Default Example
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <!-- Method 2: Random Solvable & Presets -->
+            <div class="col-lg-5">
+              <div class="academic-panel">
+                <h3 class="panel-title">Method 2 — Random Solvable Puzzle & Presets</h3>
+                <p class="small text-muted">
+                  Generates a random permutation guaranteed to have matching inversion parity with the selected Goal
+                  State.
+                </p>
+
+                <div class="mb-3">
+                  <button id="btn-generate-random" type="button" class="btn-burgundy w-100">
+                    🎲 Generate Random Puzzle
+                  </button>
+                </div>
+
+                <hr />
+                <label for="preset-selector" class="form-label small fw-semibold">
+                  Academic Verification Presets:
+                </label>
+                <div class="d-flex gap-2">
+                  <select id="preset-selector" class="form-select form-select-sm">
+                    <option value="pdfDefault">Assignment PDF Example (5 Moves)</option>
+                    <option value="oneMove">One-Move Verification (1 Move)</option>
+                    <option value="alreadySolved">Already Solved State (0 Moves)</option>
+                    <option value="moderateDepth">Moderate Challenge (12 Moves)</option>
+                    <option value="unsolvableDemo">Unsolvable Parity Example (Rejected)</option>
+                  </select>
+                  <button id="btn-load-preset" type="button" class="btn-neutral">Load</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- =========================================================
+             VIEW 3: ALGORITHM SELECTION
+             ========================================================= -->
+        <section id="view-algorithm" class="app-view" aria-labelledby="heading-algorithm">
+          <h2 id="heading-algorithm" class="view-header-title">Algorithm Selection & Configuration</h2>
+          <p class="view-header-subtitle">
+            Select the search strategy and inspect parameter controls specified in the assignment document.
+          </p>
+
+          <div class="academic-panel">
+            <h3 class="panel-title">Search Algorithm Selector</h3>
+            <div class="alert alert-secondary small py-2 px-3">
+              <strong>Assigned Algorithm Compliance:</strong> Per the assignment specification for Registration Number
+              <strong>24BCE0570</strong> (Algorithm #5: <strong>Uniform Cost Search</strong>), <strong>Uniform Cost
+                Search (UCS)</strong> is the active executable solver in this application.
+            </div>
+
+            <div class="row g-3 mt-1">
+              <div class="col-md-6">
+                <label for="algorithm-select" class="form-label fw-semibold small">Algorithm:</label>
+                <select id="algorithm-select" class="form-select form-select-sm">
+                  <option value="UCS" selected>5. Uniform Cost Search (UCS) — [ASSIGNED & IMPLEMENTED]</option>
+                  <option value="BFS" disabled>1. Breadth First Search (BFS) — [Not Assigned]</option>
+                  <option value="DFS" disabled>2. Depth First Search (DFS) — [Not Assigned]</option>
+                  <option value="DLS" disabled>3. Depth Limited Search (DLS) — [Not Assigned]</option>
+                  <option value="IDDLS" disabled>4. Iterative Deepening DLS (IDDLS) — [Not Assigned]</option>
+                  <option value="GBFS" disabled>6. Greedy Best First Search (GBFS) — [Not Assigned]</option>
+                  <option value="ASTAR" disabled>7. A* Search — [Not Assigned]</option>
+                </select>
+
+                <div class="mt-3">
+                  <label for="ucs-limit-input" class="form-label fw-semibold small">
+                    UCS Safety Expansion Limit (Nodes):
+                  </label>
+                  <input id="ucs-limit-input" type="number" class="form-control form-control-sm" value="25000" min="100"
+                    max="100000" step="500" />
+                  <div class="form-text small">
+                    Prevents browser lockup on very deep searches; stops cleanly if reached.
+                  </div>
+                </div>
+              </div>
+
+              <div class="col-md-6">
+                <div class="p-3 rounded"
+                  style="background: var(--surface-neutral); border: 1px solid var(--border-subtle);">
+                  <div class="fw-semibold small mb-2">PDF Parameter Reference Controls (Read-Only for UCS)</div>
+                  <div class="mb-2">
+                    <label class="form-label small mb-1 text-muted">For DLS — Depth Limit (ℓ):</label>
+                    <input type="number" class="form-control form-control-sm" value="15" disabled />
+                  </div>
+                  <div>
+                    <label class="form-label small mb-1 text-muted">For GBFS / A* — Heuristic Selection h(n):</label>
+                    <select class="form-select form-select-sm" disabled>
+                      <option>Not used in UCS (Uninformed Search uses g(n) only)</option>
+                      <option>Misplaced Tiles</option>
+                      <option>Manhattan Distance</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- =========================================================
+             VIEW 4: PUZZLE VISUALIZATION
+             ========================================================= -->
+        <section id="view-visualizer" class="app-view" aria-labelledby="heading-visualizer">
+          <div class="d-flex flex-wrap align-items-center justify-content-between gap-2 mb-2">
+            <div>
+              <h2 id="heading-visualizer" class="view-header-title">Puzzle & Solution Path Visualizer</h2>
+              <p class="view-header-subtitle mb-0">
+                Complete board-by-board solution sequence (d + 1 separate DOM grids) and legal single-move transition
+                inspector.
+              </p>
+            </div>
+            <div class="btn-group btn-group-sm" role="group" aria-label="Visualization Mode">
+              <button id="mode-btn-solution" type="button" class="btn-burgundy">
+                Final Solution Path Mode
+              </button>
+              <button id="mode-btn-search" type="button" class="btn-neutral">
+                Search Snapshots Mode
+              </button>
+            </div>
+          </div>
+
+          <!-- Top Reference Row: Initial, Active/Animated Current, Goal -->
+          <div class="academic-panel">
+            <div class="row g-3 text-center align-items-center">
+              <div class="col-md-4">
+                <div class="small fw-semibold mb-1">Initial State (g = 0)</div>
+                <div id="vis-initial-board" class="puzzle-board"></div>
+              </div>
+              <div class="col-md-4">
+                <div class="small fw-semibold mb-1" id="vis-current-label">Current Selected State</div>
+                <div id="vis-current-board" class="puzzle-board"></div>
+                <div id="vis-current-caption" class="small text-muted mt-1">—</div>
+              </div>
+              <div class="col-md-4">
+                <div class="small fw-semibold mb-1">Goal State</div>
+                <div id="vis-goal-board" class="puzzle-board"></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="row g-3">
+            <!-- Left Column: Every solution state as its own separate 3x3 DOM board connected by ↓ arrows -->
+            <div class="col-lg-6">
+              <div class="academic-panel h-100">
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                  <h3 class="panel-title mb-0" id="sequence-panel-title">
+                    Final Solution Path Sequence
+                  </h3>
+                  <span id="verification-badge" class="badge-soft">Verified</span>
+                </div>
+                <p class="small text-muted mb-2" id="sequence-panel-desc">
+                  Each step below is rendered as an independent 3×3 board connected by downward arrows (↓). Click any
+                  step or use Next/Prev controls.
+                </p>
+                <div id="solution-boards-container" class="solution-sequence-scroll"></div>
+              </div>
+            </div>
+
+            <!-- Right Column: Generated Legal Successor States from the Selected State -->
+            <div class="col-lg-6">
+              <div class="academic-panel h-100">
+                <h3 class="panel-title">Generated Legal Successor States</h3>
+                <p class="small text-muted">
+                  Orthogonal blank-tile swaps available from the currently selected board (Corner: 2, Edge: 3, Centre:
+                  4).
+                </p>
+                <div id="vis-successors-container" class="successor-grid-list"></div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- =========================================================
+             VIEW 5: SEARCH PROCESS VISUALIZATION
+             ========================================================= -->
+        <section id="view-search" class="app-view" aria-labelledby="heading-search">
+          <h2 id="heading-search" class="view-header-title">Search Process Visualization (UCS Event Inspector)</h2>
+          <p class="view-header-subtitle">
+            Inspect recorded Uniform Cost Search priority-queue expansions, parent pointers, frontier (Open List), and
+            explored states (Closed List).
+          </p>
+
+          <div class="academic-panel">
+            <div class="d-flex flex-wrap align-items-center justify-content-between gap-2 mb-3">
+              <div>
+                <strong>Expansion Event Step:</strong>
+                <span id="search-event-counter" class="badge-burgundy ms-1">0 / 0</span>
+              </div>
+              <div class="d-flex align-items-center gap-2">
+                <label for="search-event-slider" class="small text-muted mb-0">Scrub Event:</label>
+                <input id="search-event-slider" type="range" class="form-range" style="width: 200px;" min="0" max="0"
+                  value="0" />
+              </div>
+            </div>
+
+            <div class="row g-3">
+              <div class="col-md-4 text-center">
+                <div class="small fw-semibold mb-1">Parent Node</div>
+                <div id="search-parent-board" class="puzzle-board board-sm"></div>
+                <div id="search-parent-key" class="mono-state text-muted mt-1">—</div>
+              </div>
+              <div class="col-md-4 text-center">
+                <div class="small fw-semibold mb-1">Current Node Expanded</div>
+                <div id="search-current-board" class="puzzle-board board-sm"></div>
+                <div id="search-current-meta" class="small mt-1 fw-semibold">—</div>
+              </div>
+              <div class="col-md-4">
+                <table class="table-academic">
+                  <tbody>
+                    <tr>
+                      <th>Path Cost g(n)</th>
+                      <td id="sp-cost">0</td>
+                    </tr>
+                    <tr>
+                      <th>Current Search Depth</th>
+                      <td id="sp-depth">0</td>
+                    </tr>
+                    <tr>
+                      <th>Nodes Generated</th>
+                      <td id="sp-generated">0</td>
+                    </tr>
+                    <tr>
+                      <th>Nodes Expanded</th>
+                      <td id="sp-expanded">0</td>
+                    </tr>
+                    <tr>
+                      <th>Frontier (Open) Size</th>
+                      <td id="sp-frontier-size">0</td>
+                    </tr>
+                    <tr>
+                      <th>Explored (Closed) Size</th>
+                      <td id="sp-explored-size">0</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+
+          <div class="row g-3">
+            <div class="col-lg-6">
+              <div class="academic-panel h-100">
+                <h3 class="panel-title">Generated Successors at This Expansion</h3>
+                <div id="search-event-successors" class="successor-grid-list"></div>
+              </div>
+            </div>
+            <div class="col-lg-6">
+              <div class="academic-panel h-100">
+                <h3 class="panel-title">Frontier (Open List — Min-Heap Top Entries) & Explored (Closed List)</h3>
+                <div class="small fw-semibold mb-1">Frontier Priority Queue (ordered by lowest g(n)):</div>
+                <div class="table-responsive mb-3">
+                  <table class="table-academic">
+                    <thead>
+                      <tr>
+                        <th>#</th>
+                        <th>State</th>
+                        <th>Cost g(n)</th>
+                        <th>Depth</th>
+                        <th>Last Action</th>
+                      </tr>
+                    </thead>
+                    <tbody id="sp-frontier-tbody"></tbody>
+                  </table>
+                </div>
+                <div class="small fw-semibold mb-1">Recently Explored States (Closed List):</div>
+                <div id="sp-explored-list" class="mono-state p-2 rounded" style="background: var(--surface-neutral);">
+                  —
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- =========================================================
+             VIEW 6: SOLUTION SUMMARY
+             ========================================================= -->
+        <section id="view-summary" class="app-view" aria-labelledby="heading-summary">
+          <h2 id="heading-summary" class="view-header-title">Solution Summary & Execution Statistics</h2>
+          <p class="view-header-subtitle">
+            Complete quantitative report produced by Uniform Cost Search on the current puzzle configuration.
+          </p>
+
+          <div class="academic-panel">
+            <h3 class="panel-title">UCS Execution Report</h3>
+            <div class="table-responsive">
+              <table class="table-academic">
+                <tbody>
+                  <tr>
+                    <th style="width: 38%;">Solution Status</th>
+                    <td id="sum-status">—</td>
+                  </tr>
+                  <tr>
+                    <th>Total Number of Moves (d)</th>
+                    <td id="sum-moves">—</td>
+                  </tr>
+                  <tr>
+                    <th>Accumulated Path Cost g(n)</th>
+                    <td id="sum-cost">—</td>
+                  </tr>
+                  <tr>
+                    <th>Total Nodes Generated</th>
+                    <td id="sum-generated">—</td>
+                  </tr>
+                  <tr>
+                    <th>Total Nodes Expanded</th>
+                    <td id="sum-expanded">—</td>
+                  </tr>
+                  <tr>
+                    <th>Explored States (Closed Set Size)</th>
+                    <td id="sum-explored">—</td>
+                  </tr>
+                  <tr>
+                    <th>Maximum Search Depth Reached</th>
+                    <td id="sum-depth">—</td>
+                  </tr>
+                  <tr>
+                    <th>Execution Time</th>
+                    <td id="sum-time">—</td>
+                  </tr>
+                  <tr>
+                    <th>Approximate Memory Usage</th>
+                    <td id="sum-memory">—</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <div class="academic-panel">
+            <h3 class="panel-title">Terminology & Measurement Definitions</h3>
+            <ul class="small mb-0">
+              <li class="mb-1">
+                <strong>Solution Moves (d):</strong> Number of legal blank-tile transitions from the Initial State to
+                the Goal State along the optimal path (d + 1 boards total).
+              </li>
+              <li class="mb-1">
+                <strong>Nodes Generated:</strong> Total unique states created and inserted into the priority-queue
+                frontier during search (including the initial root state).
+              </li>
+              <li class="mb-1">
+                <strong>Nodes Expanded / Explored States:</strong> States popped from the minimum-priority queue whose
+                legal successors were evaluated (or goal-tested upon removal).
+              </li>
+              <li>
+                <strong>Approximate Memory Usage:</strong> <span id="sum-memory-note">Calculated from live count of
+                  stored node records, priority-queue entries, and closed-set keys.</span>
+              </li>
+            </ul>
+          </div>
+        </section>
+
+        <!-- =========================================================
+             VIEW 7: ALGORITHM INFORMATION
+             ========================================================= -->
+        <section id="view-info" class="app-view" aria-labelledby="heading-info">
+          <h2 id="heading-info" class="view-header-title">Algorithm Information & Theoretical Reference</h2>
+          <p class="view-header-subtitle">
+            Detailed specification of Uniform Cost Search (implemented) and reference documentation for uninformed and
+            informed search strategies.
+          </p>
+
+          <div class="academic-panel">
+            <h3 class="panel-title">Implemented Algorithm: #5 Uniform Cost Search (UCS)</h3>
+            <p class="small">
+              <strong>Description:</strong> Uniform Cost Search (UCS) is an uninformed best-first graph search algorithm
+              that expands nodes in increasing order of accumulated path cost <code>g(n)</code> from the root state.
+            </p>
+            <p class="small">
+              <strong>Working Principle & Priority Queue Behaviour:</strong>
+            </p>
+            <ol class="small">
+              <li>Initialize the frontier priority queue (binary min-heap) with the Initial State at path cost
+                <code>g(n<sub>0</sub>) = 0</code>.</li>
+              <li>Pop the node <code>n</code> with the lowest path cost <code>g(n)</code> from the priority queue.</li>
+              <li>Perform the goal test upon removal from the priority queue. If <code>n</code> matches the Goal State,
+                reconstruct the optimal path via parent pointers.</li>
+              <li>Otherwise, place <code>n</code> in the <em>Explored (Closed)</em> set and generate all legal
+                orthogonal blank-tile successors <code>n'</code>.</li>
+              <li>For each successor <code>n'</code> with cost <code>g(n') = g(n) + c(n, n')</code> (where
+                <code>c = 1</code> per move in the standard 8-puzzle), insert <code>n'</code> into the min-heap if
+                unexplored, or relax/update its parent pointer if a strictly cheaper path is discovered.</li>
+            </ol>
+
+            <div class="table-responsive mt-3">
+              <table class="table-academic">
+                <tbody>
+                  <tr>
+                    <th style="width: 28%;">Evaluation / Cost Function</th>
+                    <td><code>f(n) = g(n)</code>, where <code>g(n)</code> is the exact cumulative step cost from the
+                      initial state. UCS uses <strong>no heuristic</strong> (<code>h(n) = 0</code>).</td>
+                  </tr>
+                  <tr>
+                    <th>Completeness</th>
+                    <td><strong>Complete</strong> (provided every step cost <code>c(n, n') ≥ ε &gt; 0</code> and the
+                      state space is finite or a solution exists).</td>
+                  </tr>
+                  <tr>
+                    <th>Optimality</th>
+                    <td><strong>Optimal</strong> — Because nodes are expanded in non-decreasing order of
+                      <code>g(n)</code> and goal testing occurs upon priority-queue removal, the first goal node
+                      expanded is guaranteed to have minimum total path cost.</td>
+                  </tr>
+                  <tr>
+                    <th>Time Complexity</th>
+                    <td><code>O(b<sup>1 + ⌊C* / ε⌋</sup>)</code>, where <code>b</code> is the branching factor
+                      (<code>b ∈ {2, 3, 4}</code>, average ≈ 2.67), <code>C*</code> is the optimal solution cost, and
+                      <code>ε = 1</code>. With unit step costs, this simplifies to <code>O(b<sup>d</sup>)</code>.</td>
+                  </tr>
+                  <tr>
+                    <th>Space Complexity</th>
+                    <td><code>O(b<sup>1 + ⌊C* / ε⌋</sup>) = O(b<sup>d</sup>)</code>, as all frontier and explored states
+                      are retained in memory.</td>
+                  </tr>
+                  <tr>
+                    <th>Advantages</th>
+                    <td>Guarantees minimum-cost solutions even when step costs vary; never gets trapped in infinite
+                      cycles when implemented as a graph search.</td>
+                  </tr>
+                  <tr>
+                    <th>Limitations</th>
+                    <td>Explores uniformly in all directions without domain heuristics, consuming significant memory
+                      (<code>O(b<sup>d</sup>)</code>) on deep puzzle instances.</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <div class="academic-panel">
+            <h3 class="panel-title">Reference Overview: Other Assignment Search Algorithms (Theoretical)</h3>
+            <div class="table-responsive">
+              <table class="table-academic">
+                <thead>
+                  <tr>
+                    <th>Algorithm</th>
+                    <th>Queue / Strategy</th>
+                    <th>Time Complexity</th>
+                    <th>Space Complexity</th>
+                    <th>Complete?</th>
+                    <th>Optimal?</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><strong>1. BFS</strong> (Uninformed)</td>
+                    <td>FIFO Queue (level-by-level depth d)</td>
+                    <td>O(b<sup>d</sup>)</td>
+                    <td>O(b<sup>d</sup>)</td>
+                    <td>Yes</td>
+                    <td>Yes (unit step cost)</td>
+                  </tr>
+                  <tr>
+                    <td><strong>2. DFS</strong> (Uninformed)</td>
+                    <td>LIFO Stack (deepest node first)</td>
+                    <td>O(b<sup>m</sup>)</td>
+                    <td>O(b · m)</td>
+                    <td>Finite graph only</td>
+                    <td>No</td>
+                  </tr>
+                  <tr>
+                    <td><strong>3. DLS</strong> (Uninformed)</td>
+                    <td>DFS bounded by depth limit ℓ</td>
+                    <td>O(b<sup>ℓ</sup>)</td>
+                    <td>O(b · ℓ)</td>
+                    <td>Only if d ≤ ℓ</td>
+                    <td>No</td>
+                  </tr>
+                  <tr>
+                    <td><strong>4. IDDLS</strong> (Uninformed)</td>
+                    <td>Repeated DLS for ℓ = 0, 1, 2, ..., d</td>
+                    <td>O(b<sup>d</sup>)</td>
+                    <td>O(b · d)</td>
+                    <td>Yes</td>
+                    <td>Yes (unit step cost)</td>
+                  </tr>
+                  <tr>
+                    <td><strong>5. UCS</strong> (Implemented)</td>
+                    <td>Min-Priority Queue ordered by g(n)</td>
+                    <td>O(b<sup>1 + ⌊C*/ε⌋</sup>)</td>
+                    <td>O(b<sup>1 + ⌊C*/ε⌋</sup>)</td>
+                    <td>Yes</td>
+                    <td>Yes</td>
+                  </tr>
+                  <tr>
+                    <td><strong>6. GBFS</strong> (Informed)</td>
+                    <td>Priority Queue ordered by heuristic h(n) only</td>
+                    <td>O(b<sup>m</sup>)</td>
+                    <td>O(b<sup>m</sup>)</td>
+                    <td>Finite graph only</td>
+                    <td>No</td>
+                  </tr>
+                  <tr>
+                    <td><strong>7. A* Search</strong> (Informed)</td>
+                    <td>Priority Queue ordered by f(n) = g(n) + h(n)</td>
+                    <td>O(b<sup>d</sup>) (heuristic-reduced)</td>
+                    <td>O(b<sup>d</sup>)</td>
+                    <td>Yes</td>
+                    <td>Yes (admissible h)</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+      </main>
+    </div>
+  </div>
+
+  <!-- Scripts -->
+  <script src="js/puzzle.js"></script>
+  <script src="js/ucs.js"></script>
+  <script src="js/app.js"></script>
+</body>
+
+</html>
