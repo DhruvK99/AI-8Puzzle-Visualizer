@@ -165,11 +165,22 @@ The repository page and the live website are different links; the final submissi
 | Assigned algorithm | Uniform Cost Search (UCS), Algorithm #5 |
 | Course | Artificial Intelligence |
 
-## References and acknowledgements
+## 10. References
 
-- The supplied *Artificial Intelligence Digital Assignment (Case Study): Interactive 8-Puzzle Problem Solver using AI Search Algorithms*.
-- Bootstrap documentation and CSS framework: <https://getbootstrap.com/>.
-- Any additional third-party resources, code, fonts or visual assets used in the final version should be acknowledged here.
+1. **Algorithm Specification:**  
+   Stuart Russell and Peter Norvig, *Artificial Intelligence: A Modern Approach* (4th Edition), Pearson. Chapter 3: “Solving Problems by Searching” (Uniform Cost Search, Priority Queues, and Optimality, pp. 75–77).
+
+2. **Puzzle Mathematics (Solvability & Inversion Parity):**  
+   Wayne Kelly, “Solvability of the Tiles Game,” *The Mathematical Gazette*. Used for the `countInversions` parity validation to guarantee puzzle solvability before search execution.
+
+3. **UI Framework:**  
+   Bootstrap 5.3 Documentation — [https://getbootstrap.com/docs/5.3/](https://getbootstrap.com/docs/5.3/) (utilized for responsive grid layouts, buttons, and form controls).
+
+4. **Web APIs & JavaScript ES6:**  
+   MDN Web Docs — [https://developer.mozilla.org/](https://developer.mozilla.org/) (utilized for ES6 data structures like `Set` and `Map`, DOM manipulation, and the `performance.now()` high-resolution timing API for execution metrics).
+
+5. **Project Specification:**  
+   Vellore Institute of Technology (VIT), *Artificial Intelligence Digital Assignment (Case Study)*. Used as the primary requirement authority for navigation, visualization constraints, and algorithm locking.
 
 ## Scope and limitations
 
