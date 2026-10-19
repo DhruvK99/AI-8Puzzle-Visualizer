@@ -143,19 +143,6 @@ node assets/test_runner.js
 
 The suite checks board validation, legal movement rules, UCS behaviour, optimal solution-path reconstruction, unsolvable inputs, random puzzle generation, and resource-limit handling. These tests are a development aid; they are not a substitute for trying the interactive website in a browser.
 
-## GitHub Pages deployment
-
-This is a static website and can be hosted with GitHub Pages.
-
-1. Push the project files to a GitHub repository.
-2. Open the repository's **Settings → Pages**.
-3. Select **Deploy from a branch**, choose the `main` branch and the repository root (`/`), then save.
-4. Wait for deployment to complete and open the generated website URL.
-5. Check that the styles and JavaScript load and that the puzzle can be solved on the published site.
-6. Replace the GitHub repository and GitHub Pages placeholders near the top of this README with the actual URLs.
-
-The repository page and the live website are different links; the final submission should include both as requested by the assignment.
-
 ## Student details
 
 | Field | Details |
@@ -178,9 +165,6 @@ The repository page and the live website are different links; the final submissi
 
 4. **Web APIs & JavaScript ES6:**  
    MDN Web Docs — [https://developer.mozilla.org/](https://developer.mozilla.org/) (utilized for ES6 data structures like `Set` and `Map`, DOM manipulation, and the `performance.now()` high-resolution timing API for execution metrics).
-
-5. **Project Specification:**  
-   Vellore Institute of Technology (VIT), *Artificial Intelligence Digital Assignment (Case Study)*. Used as the primary requirement authority for navigation, visualization constraints, and algorithm locking.
 
 ## Scope and limitations
 
