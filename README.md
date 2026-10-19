@@ -19,7 +19,7 @@ An interactive, browser-based 8-Puzzle solver for the Artificial Intelligence di
 **Project links**
 
 - **GitHub repository:** https://github.com/DhruvK99/AI-8Puzzle-Visualizer
-- **GitHub Pages website:** `ADD_YOUR_GITHUB_PAGES_URL_HERE`
+- **GitHub Pages website:** https://dhruvk99.github.io/AI-8Puzzle-Visualizer/
 
 Replace these two placeholders after the repository is created and GitHub Pages is deployed. Do not leave the placeholders in the final submitted README.
 
